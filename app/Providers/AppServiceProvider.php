@@ -7,8 +7,11 @@ use App\Billing\CreditPaymentGateway;
 use App\Billing\PaymentGatewayContract;
 use App\channel;
 use App\Http\View\Composers\ChannelsComposer;
+use App\PostCardSendingService;
+use App\strMixins\StrMixins;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -49,6 +52,18 @@ class AppServiceProvider extends ServiceProvider
 
         //option -3
         View::composer('partials.channels.*', ChannelsComposer::class);
+
+
+        //facades
+        $this->app->singleton('Postcard', function($app) {
+            return new PostCardSendingService('us', 80, 180);
+        });
+        //Macro
+        /*
+        Str::macro('partNumber',function($number){
+            return 'ABC-'.substr($number, 0, 3).'-'.substr($number, 3);
+        });*/
+        Str::mixin(new StrMixins());
 
     }
 }
